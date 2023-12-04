@@ -3,7 +3,7 @@
 int part1(std::vector<std::string> input) {
     int firstDigit, lastDigit, number, sum = 0;
 
-    for(auto line : input) {
+    for(const auto& line : input) {
         firstDigit = lastDigit = 0;
         for(int i = 0; i < line.size(); ++i) {
             char c = line[i];
@@ -29,7 +29,7 @@ int part2(std::vector<std::string> input) {
           "seven", "eight", "nine" };
     int firstDigit, lastDigit, number, sum = 0;
 
-    for(auto& line : input) {
+    for(const auto& line : input) {
         firstDigit = lastDigit = 0;
         for(int i = 0; i < line.size(); i++) {
             char c = line[i];
