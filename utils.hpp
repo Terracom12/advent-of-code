@@ -20,4 +20,6 @@ std::ostream& operator<<(std::ostream& os, std::vector<T>& vec) {
     for(size_t i = 0; i < vec.size() - 1; i++)
         os << vec[i] << ", ";
     os << vec[vec.size() - 1] << "]";
+
+    return os;
 }
