@@ -8,6 +8,7 @@
 #include <cmath>
 #include <vector>
 #include <map>
+#include <thread>
 #include <utility>
 #include <array>
 #include <limits>
