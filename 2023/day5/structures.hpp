@@ -239,21 +239,20 @@ Almanac::Almanac(const std::vector<std::string>& from) : maps(), compactedMap() 
         }
     }
     // Ensure map ranges are all in correct order
-    for(Map& map : maps) {
-        std::sort(map.ranges.begin(), map.ranges.end());
-    }
+    // for(Map& map : maps) {
+    //     std::sort(map.ranges.begin(), map.ranges.end());
+    // }
 
-    compactedMap = compactMaps(maps);
-    compactedMap.name = "compact";
+    // compactedMap = compactMaps(maps);
+    // compactedMap.name = "compact";
 }
 ll Almanac::computeMapping(ll value) const {
-    return compactedMap.mapFrom(value);
+    // return compactedMap.mapFrom(value);
     
     ll to = value;
     for(const auto& map : maps) {
         to = map.mapFrom(to);
     }
-
     return to;
 }
 ll Almanac::minMappingFromRange(ll start, ll length) const {
