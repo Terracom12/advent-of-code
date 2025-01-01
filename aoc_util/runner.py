@@ -6,7 +6,6 @@ Interfaces with an implementation of AOCBase
 
 from typing import Any, Type
 from .get_input import get_input
-from pprint import pprint
 from termcolor import colored
 
 __all__ = ["aoc_run", "AOCBase"]
@@ -41,7 +40,9 @@ def aoc_run(year: int, day: int, ImplCls: Type[AOCBase]) -> None:
     impl = ImplCls()
 
     print(colored(f"Running Advent of Code implementation for Day {day} of {year}", "blue"))
-    print(colored(f"Using implementation class '{ImplCls.__name__}'", "blue"), "\n")
+    print(colored(f"Using implementation class '{ImplCls.__name__}'", "blue"))
+    print(colored("Input", "blue"), colored("was", "green") if input_result.was_cached else colored("was not", "red"), colored("cached", "blue"))
+    print()
 
     sample_res_pt1 = None
     full_res_pt1 = None

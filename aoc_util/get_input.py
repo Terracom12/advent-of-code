@@ -3,7 +3,6 @@
 Aquire the input via an HTTP GET request, or used a cache version for a specified day and year."""
 
 from dataclasses import dataclass
-import itertools
 from bs4 import BeautifulSoup
 import os
 from pathlib import Path
@@ -23,6 +22,7 @@ CACHE_DIR = ".cached_input"
 class InputResult:
     full_input: str
     sample_input: str
+    was_cached: bool
 
 
 class NoCacheError(Exception):
@@ -33,7 +33,7 @@ def get_input(*, year: int, day: int, no_req=False) -> InputResult:
     if not validate_day_yr(year=year, day=day):
         raise InvalidDateError(year=year, day=day)
 
-    result = InputResult("", "")
+    result = InputResult("", "", True)
 
     # Ensure that CACHE_DIR exists
     Path(CACHE_DIR).mkdir(exist_ok=True)
@@ -44,6 +44,7 @@ def get_input(*, year: int, day: int, no_req=False) -> InputResult:
     if full_input_str := _get_cached_input(input_path):
         result.full_input = full_input_str
     elif not no_req:
+        result.was_cached &= False
         result.full_input = _get_remote_full_input(year, day)
         _cache_input(input_path, result.full_input)
     else:
@@ -52,6 +53,7 @@ def get_input(*, year: int, day: int, no_req=False) -> InputResult:
     if sample_input_str := _get_cached_input(sample_input_path):
         result.sample_input = sample_input_str
     elif not no_req:
+        result.was_cached &= False
         result.sample_input = _get_remote_sample_input(year, day)
         _cache_input(sample_input_path, result.sample_input)
     else:
