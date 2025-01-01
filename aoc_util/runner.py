@@ -40,7 +40,7 @@ def aoc_run(year: int, day: int, ImplCls: Type[AOCBase]) -> None:
     impl = ImplCls()
 
     print(colored(f"Running Advent of Code implementation for Day {day} of {year}", "blue"))
-    print(colored(f"Using implementation class '{ImplCls.__name__}'", "blue"))
+    print(colored("Using implementation class '", "blue"), colored(ImplCls.__name__, "magenta"), colored("'", "blue"), sep="")
     print(colored("Input", "blue"), colored("was", "green") if input_result.was_cached else colored("was not", "red"), colored("cached", "blue"))
     print()
 
