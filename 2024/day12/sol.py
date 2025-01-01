@@ -1,128 +1,129 @@
+from aoc_util import AOCBase, aoc_run
 from collections import deque
 
+class Day12(AOCBase):
+    def process_input(self, raw_input: str) -> list[list[str]]:
+        grid = [[*line] for line in raw_input.split("\n")]
 
-def part1(grid: list[list[str]]) -> int:
-    visited = [[False] * len(grid[0]) for _ in grid]
+        grid = grid[:-1]
 
-    def dfs(i: int, j: int, plot: str) -> tuple[int, int]:
-        """
-        Returns:
-            (area, perimeter)
-        """
+        return grid
 
-        # Out of bounds or wrong plot type
-        #  -> add 1 more perimeter
-        if i not in range(len(grid)) or j not in range(len(grid[0])):
-            return (0, 1)
+    def part1(self, grid: list[list[str]]) -> int:
+        visited = [[False] * len(grid[0]) for _ in grid]
 
-        if grid[i][j] != plot:
-            return (0, 1)
+        def dfs(i: int, j: int, plot: str) -> tuple[int, int]:
+            """
+            Returns:
+                (area, perimeter)
+            """
 
-        # Visited already of same plot -> skip
-        if visited[i][j]:
-            return (0, 0)
+            # Out of bounds or wrong plot type
+            #  -> add 1 more perimeter
+            if i not in range(len(grid)) or j not in range(len(grid[0])):
+                return (0, 1)
 
-        visited[i][j] = True
+            if grid[i][j] != plot:
+                return (0, 1)
 
-        # Correct plot type -> add 1 to area
-        res = (1, 0)
-
-        for di,dj in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            new = dfs(i + di, j + dj, plot)
-            res = (res[0] + new[0], res[1] + new[1])
-
-        return res
-
-    result = 0
-
-    for i,row in enumerate(grid):
-        for j,plot in enumerate(row):
+            # Visited already of same plot -> skip
             if visited[i][j]:
-                continue
+                return (0, 0)
 
-            area, perimeter = dfs(i, j, plot)
+            visited[i][j] = True
 
-            result += area * perimeter
+            # Correct plot type -> add 1 to area
+            res = (1, 0)
 
-    return result
+            for di,dj in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                new = dfs(i + di, j + dj, plot)
+                res = (res[0] + new[0], res[1] + new[1])
 
-def part2(grid: list[list[str]]) -> int:
-    visited = [[False] * len(grid[0]) for _ in grid]
-    # i, j, dir_i, dir_j
-    edge_cache: set[tuple[int, int, int, int]] = set()
+            return res
 
-    to_visit: deque[tuple[int, int, tuple[int, int]]] = deque()
+        result = 0
 
-    def bfs_helper() -> tuple[bool, int, int]:
-        """
-        Returns:
-            (should_continue, area, num_edges))
-        """
+        for i,row in enumerate(grid):
+            for j,plot in enumerate(row):
+                if visited[i][j]:
+                    continue
 
-        if len(to_visit) == 0:
-            edge_cache.clear()
-            return (False, 0, 0)
+                area, perimeter = dfs(i, j, plot)
 
-        i, j, last = to_visit.pop()
+                result += area * perimeter
 
-        # Out of bounds or wrong plot type
-        #  -> add 1 more perimeter
-        if i not in range(len(grid)) or j not in range(len(grid[0])) or grid[i][j] != plot:
-            di,dj = i - last[0], j - last[1]
+        return result
 
-            assert last[0] != -1 and last[1] != -1
+    def part2(self, grid: list[list[str]]) -> int:
+        visited = [[False] * len(grid[0]) for _ in grid]
+        # i, j, dir_i, dir_j
+        edge_cache: set[tuple[int, int, int, int]] = set()
 
-            edge_cache.add((i, j, di, dj))
+        to_visit: deque[tuple[int, int, tuple[int, int]]] = deque()
 
-            # Opposite directions (if left/right try up and down, and vice versa)
-            if di == 0 and ((i - 1, j, di, dj) in edge_cache or (i + 1, j, di, dj) in edge_cache):
-                return (True, 0, 0)
-            if dj == 0 and ((i, j - 1, di, dj) in edge_cache or (i, j + 1, di, dj) in edge_cache):
-                return (True, 0, 0)
+        def bfs_helper() -> tuple[bool, int, int]:
+            """
+            Returns:
+                (should_continue, area, num_edges))
+            """
 
-            # Not part of another edge, add 1 to num edges
-            return (True, 0, 1)
+            if len(to_visit) == 0:
+                edge_cache.clear()
+                return (False, 0, 0)
 
-        # Visited already of same plot -> skip
-        if visited[i][j]:
-            return (True, 0, 0)
+            i, j, last = to_visit.pop()
 
-        visited[i][j] = True
+            # Out of bounds or wrong plot type
+            #  -> add 1 more perimeter
+            if i not in range(len(grid)) or j not in range(len(grid[0])) or grid[i][j] != plot:
+                di,dj = i - last[0], j - last[1]
 
-        # Correct plot type -> add 1 to area
+                assert last[0] != -1 and last[1] != -1
 
-        for di,dj in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            to_visit.appendleft((i + di, j + dj, (i, j)))
+                edge_cache.add((i, j, di, dj))
 
-        return (True, 1, 0)
+                # Opposite directions (if left/right try up and down, and vice versa)
+                if di == 0 and ((i - 1, j, di, dj) in edge_cache or (i + 1, j, di, dj) in edge_cache):
+                    return (True, 0, 0)
+                if dj == 0 and ((i, j - 1, di, dj) in edge_cache or (i, j + 1, di, dj) in edge_cache):
+                    return (True, 0, 0)
 
-    result = 0
+                # Not part of another edge, add 1 to num edges
+                return (True, 0, 1)
 
-    for i,row in enumerate(grid):
-        for j,plot in enumerate(row):
+            # Visited already of same plot -> skip
             if visited[i][j]:
-                continue
+                return (True, 0, 0)
 
-            tot_area = 0
-            tot_edges = 0
-            to_visit.appendleft((i, j, (-1, -1)))
-            while (ret := bfs_helper()) and ret[0] is True:
-                _, area, num_edges = ret
-                tot_area += area
-                tot_edges += num_edges
+            visited[i][j] = True
 
-            result += tot_edges * tot_area
-            # print(f"For '{plot}' @ {i}, {j} -- {area=} {num_edges=}", edge_cache)
-            # print(list(filter(lambda t: t[0] == -1, edge_cache)))
+            # Correct plot type -> add 1 to area
 
-    return result
+            for di,dj in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                to_visit.appendleft((i + di, j + dj, (i, j)))
 
-def main():
-    with open("input.txt") as f:
-        grid = [[*line][:-1] for line in f.readlines()]
+            return (True, 1, 0)
 
-    print("Part 1:", part1(grid))
-    print("Part 2:", part2(grid))
+        result = 0
+
+        for i,row in enumerate(grid):
+            for j,plot in enumerate(row):
+                if visited[i][j]:
+                    continue
+
+                tot_area = 0
+                tot_edges = 0
+                to_visit.appendleft((i, j, (-1, -1)))
+                while (ret := bfs_helper()) and ret[0] is True:
+                    _, area, num_edges = ret
+                    tot_area += area
+                    tot_edges += num_edges
+
+                result += tot_edges * tot_area
+                # print(f"For '{plot}' @ {i}, {j} -- {area=} {num_edges=}", edge_cache)
+                # print(list(filter(lambda t: t[0] == -1, edge_cache)))
+
+        return result
 
 if __name__ == "__main__":
-    main()
+    aoc_run(2024, 12, Day12)

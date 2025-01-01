@@ -1,4 +1,10 @@
+# Ignore objects and executables
 **.o
 **.exe
 
+# Python temporary files
+__pycache__
+
+# Do not upload input files
 **.txt
+.cached_input
