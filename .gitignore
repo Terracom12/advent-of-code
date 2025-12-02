@@ -8,3 +8,7 @@ __pycache__
 # Do not upload input files
 **.txt
 .cached_input
+
+# Env files
+.env
+.envrc
