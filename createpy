@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ $# -lt 2 ]]; then
+    echo "Usage $0 <year> <day>"
+    exit 1
+fi
+
+year=$1
+day=$2
+
+templ_path=./templates/sol.py
+path="./$year/day${day}"
+outpath="$path/sol.py"
+
+mkdir -p "$path"
+
+if [[ -f "$outpath" ]]; then
+    echo "File '$outpath' already exists!"
+    exit 1
+fi
+
+sed -E '
+s/\{\{DAY\}\}/'"$day"'/g
+s/\{\{YEAR\}\}/'"$year"'/g
+' "$templ_path" >"$outpath"
